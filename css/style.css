@@ -135,6 +135,24 @@ body {
 	color: var(--gray-text-color);
 }
 
+.clients-table-icon {
+	margin-right: 2px;
+	opacity: 0.7;
+}
+
+@keyframes rotating {
+	from {
+		transform: rotate(0deg);
+	}
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+.spinning-animation {
+	animation: rotating 1.8s linear infinite;
+}
+
 /* header */
 .header {
 	margin-bottom: 40px;
@@ -173,6 +191,10 @@ body {
 	margin-bottom: 40px;
 }
 
+.clients-table__head {
+	position: relative;
+}
+
 .clients-table__data,
 .clients-table__btn {
 	text-align: left;
@@ -187,7 +209,7 @@ body {
 }
 
 .clients-table__text {
-	margin-right: -1px;
+	margin-right: 2px;
 }
 
 .clients-table__ico {
@@ -197,7 +219,7 @@ body {
 
 .clients-table__sort-help {
 	display: inline-block;
-	margin-left: -2px;
+	margin-left: 2px;
 	font-weight: 600;
 	font-size: 10px;
 	line-height: 14px;
@@ -245,15 +267,31 @@ body {
 .clients-table__data:nth-child(3) {
 	width: 14.7%;
 }
+
 .clients-table__data:nth-child(4) {
 	width: 14.6%;
 }
+
 .clients-table__data:nth-child(5) {
 	width: 13.5%;
 }
 
 .clients-table__body-wrapper {
 	background-color: var(--color-white);
+}
+
+.clients-table__data--preload {
+	position: relative;
+	height: 300px;
+}
+
+.table-spinner-preload {
+	position: absolute;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	inset: 50% auto auto 50%;
+	transform: translate(-50%, -50%);
 }
 
 .clients-table__body {
@@ -287,10 +325,46 @@ body {
 
 .contacts-list {
 	display: flex;
+	flex-wrap: wrap;
+	width: 115px;
+}
+
+.contacts-list__item {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.contacts-list__link {
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
 .contacts-list__item:not(:last-child) {
 	margin-right: 7px;
+}
+
+.contacts-list__link {
+	cursor: pointer;
+}
+
+.contacts-list__link-icon {
+	opacity: 0.7;
+	transition: opacity .3s ease-in-out;
+}
+
+.contacts-list__btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 16px;
+	height: 16px;
+	border: 1px solid var(--main-purple-color);
+	border-radius: 100%;
+	font-weight: 600;
+	font-size: 8px;
+	line-height: 11px;
 }
 
 .clients-table__change {
@@ -347,6 +421,10 @@ body {
 	display: flex;
 	justify-content: center;
 	align-items: center;
+}
+
+.btn-add__icon {
+	margin-right: 5px;
 }
 
 .btn-add {
