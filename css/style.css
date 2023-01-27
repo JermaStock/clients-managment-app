@@ -153,6 +153,32 @@ body {
 	animation: rotating 1.8s linear infinite;
 }
 
+.clients-submit-btn {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: 13px 36px;
+	background-color: var(--main-purple-color);
+	font-weight: 600;
+	color: var(--color-white);
+}
+
+.clients-delete-btn {
+	position: relative;
+	font-size: 12px;
+	line-height: 16px;
+}
+
+.clients-delete-btn::after {
+	content: '';
+	position: absolute;
+	bottom: 3px;
+	left: 0;
+	width: 100%;
+	height: .25px;
+	background-color: var(--text-color);
+}
+
 /* header */
 .header {
 	margin-bottom: 40px;
@@ -367,9 +393,9 @@ body {
 	line-height: 11px;
 }
 
-.clients-table__change {
+/* .clients-table__change {
 	display: inline-block;
-}
+} */
 
 .clients-table__edit,
 .clients-table__delete {
@@ -586,32 +612,6 @@ body {
 	margin-bottom: 25px;
 }
 
-.clients-form__submit {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	padding: 13px 36px;
-	background-color: var(--main-purple-color);
-	font-weight: 600;
-	color: var(--color-white);
-}
-
-.clients-form__delete {
-	position: relative;
-	font-size: 12px;
-	line-height: 16px;
-}
-
-.clients-form__delete::after {
-	content: '';
-	position: absolute;
-	bottom: 3px;
-	left: 0;
-	width: 100%;
-	height: .25px;
-	background-color: var(--text-color);
-}
-
 .clients-form__contact-wrapper {
 	position: relative;
 	display: flex;
@@ -812,4 +812,40 @@ body {
 .contact-form__input-btn.is-active {
 	visibility: visible;
 	opacity: 1;
+}
+
+.contact-confirm {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding-top: 22px;
+	padding-bottom: 27px;
+	text-align: center;
+}
+
+.contact-confirm__close {
+	inset: 22px 19px auto auto;
+}
+
+.contact-confirm__title {
+	margin-bottom: 11px;
+	font-size: 18px;
+	line-height: 25px;
+}
+
+.contact-confirm__descr {
+	margin: 0;
+	margin-bottom: 25px;
+	max-width: 292px;
+}
+
+.contact-confirm__buttons {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+.contact-confirm__submit {
+	margin-bottom: 5px;
 }

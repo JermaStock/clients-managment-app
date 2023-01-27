@@ -144,7 +144,7 @@
 			return node.appendChild(iconSvg);
 		}
 
-		const tableBody = document.createElement('tbody');
+		const body = document.createElement('tbody');
 		const loadingRow = document.createElement('tr');
 		const loadingCell = document.createElement('td');
 		const loadingElement = document.createElement('div');
@@ -152,22 +152,39 @@
 		loadingElement.classList.add('table-spinner-preload');
 		loadingCell.classList.add('clients-table__data', 'clients-table__data--preload')
 		loadingRow.classList.add('clients-table__body');
-		tableBody.classList.add('clients-table__body-wrapper');
+		body.classList.add('clients-table__body-wrapper');
 
 		loadingCell.setAttribute('colspan', '6');
 
 		createTablePreloader(loadingElement);
 		loadingCell.append(loadingElement);
 		loadingRow.append(loadingCell);
-		tableBody.append(loadingRow);
+		body.append(loadingRow);
 
 		return {
-			tableBody,
+			body,
 			loadingRow,
 		}
 	}
 
-	function createClientRow() {
+	function createClientRow(clientData, {onChange, onDelete}) {
+		function formatDate(date) {
+			const day = new Date(date).getDate();
+			const month = new Date(date).getMonth() + 1 > 9 ? new Date(date).getMonth() + 1 : 0 + `${new Date(date).getMonth() + 1}`;
+			const year = new Date(date).getFullYear();
+			const formattedDate = `${day}.${month}.${year}`;
+
+			return formattedDate;
+		}
+
+		function formatTime(time) {
+			const hours = new Date(time).getHours();
+			const minutes = new Date(time).getMinutes() > 9 ? new Date(time).getMinutes() : 0 + `${new Date(time).getMinutes()}`;
+			const formattedTime = `${hours}:${minutes}`;
+
+			return formattedTime;
+		}
+
 		function createControlButtonSvg(node, wProp, hProp, dProperty, fillProperty) {
 			const svgIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
 			const svgPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
@@ -231,14 +248,18 @@
 
 		tableRow.classList.add('clients-table__body');
 		
-		idTableCell.textContent = '123455';
-		fullNameCell.textContent = 'Скворцов Денис Юрьевич';
-		creationCellDate.textContent = '21.02.2021';
-		creationCellTime.textContent = '12:41';
-		latestCellDate.textContent = '21.02.2021'
-		latestCellTime.textContent = '14:50';
+		idTableCell.textContent = clientData.id;
+		fullNameCell.textContent = `${clientData.surname} ${clientData.name} ${clientData.lastName}`;
+		creationCellDate.textContent = formatDate(clientData.createdAt);
+		creationCellTime.textContent = formatTime(clientData.createdAt);
+		latestCellDate.textContent = formatDate(clientData.updatedAt);
+		latestCellTime.textContent = formatTime(clientData.updatedAt);;
 		changeButtonText.textContent = 'Изменить';
 		deleteButtonText.textContent = 'Удалить';
+
+		deleteClientButton.addEventListener('click', () => {
+			onDelete({clientData, clientRow: tableRow});
+		})
 		
 		creationCell.append(creationCellDate);
 		creationCell.append(creationCellTime);
@@ -377,10 +398,8 @@
 
 	function createContactList(node) {
 		const list = document.createElement('ul');
-
+		const arr = ['vk', 'facebook', 'tel', 'mail', 'other', 'more'];
 		list.classList.add('clients-table__list', 'contacts-list', 'list-reset');
-
-		let arr = ['vk', 'facebook', 'tel', 'mail', 'other', 'more'];
 
 		for (let i = 0; i < 5; i++) {
 			const item = document.createElement('li');
@@ -398,9 +417,14 @@
 		return node.appendChild(list);
 	}
 
-/* 	function createModalWindow(initButton) {
-		const modalFullSize = document.createElement('div');
-		const modalWrapper = document.createElement('div');
+	function createModalWrapper() {
+		const wrapper = document.createElement('div');
+		wrapper.classList.add('modal');
+		return wrapper;
+	}
+
+	function createModalWindow({background, initButton}, {onSave, onDelete, onClose}) {
+		const modal = document.createElement('div');
 
 		const modalTitle = document.createElement('h2');
 		const formHeadWrapper = document.createElement('div');
@@ -426,9 +450,11 @@
 		const closeModalBtn = document.createElement('button');
 		const closeModalBtnLineFirst = document.createElement('span');
 		const closeModalBtnLineSecond = document.createElement('span');
+
+		//submitBtn.type = 'button';
+		deleteBtn.type = 'button';
 	
-		modalWrapper.classList.add('modal-wrapper');
-		modalFullSize.classList.add('modal');
+		modal.classList.add('modal-wrapper');
 		modalTitle.classList.add('title', 'clients-form__title');
 		closeModalBtn.classList.add('modal-wrapper__close', 'btn-reset');
 
@@ -449,156 +475,37 @@
 
 		submitBtnWrapper.classList.add('clients-form__btn-wrapper', 'form-btn');
 		deleteBtnWrapper.classList.add('clients-form__btn-wrapper', 'form-btn');
-		submitBtn.classList.add('clients-form__submit', 'text', 'btn-reset');
-		deleteBtn.classList.add('clients-form__delete', 'btn-reset');
+		submitBtn.classList.add('clients-submit-btn', 'text', 'btn-reset');
+		deleteBtn.classList.add('clients-delete-btn', 'btn-reset');
 
 		modalTitle.textContent = 'Новый клиент';
 		titleSurname.textContent = 'Фамилия';
 		titleName.textContent = 'Имя';
 		titleSecondName.textContent = 'Отчество';
 		submitBtn.textContent = 'Сохранить';
-		deleteBtn.textContent = 'Отмена';
-
-
-		form.addEventListener('submit', e => {
-			e.preventDefault();
-			//...
-			//onSave etc...
-		})
+		deleteBtn.textContent = 'Удалить';
 
 		closeModalBtn.addEventListener('click', () => {
-			elementFadeAnimation(modalFullSize, 200, 'out', 'modal-fade-out');
-			initButton.removeAttribute('disabled', 'disabled');
-		})
-
-		window.addEventListener('click', function(event) {
-			if (event.target === modalFullSize) {
-				elementFadeAnimation(modalFullSize, 200, 'out', 'modal-fade-out');
-				initButton.removeAttribute('disabled', 'disabled');
-			}
-		})
-
-		labelSurname.append(titleSurname);
-		labelSurname.append(inputSurname);
-		labelName.append(titleName);
-		labelName.append(inputName);
-		labelSecondName.append(titleSecondName);
-		labelSecondName.append(inputSecondName);
-		submitBtnWrapper.append(submitBtn);
-		deleteBtnWrapper.append(deleteBtn);
-
-		formHeadWrapper.append(labelSurname);
-		formHeadWrapper.append(labelName);
-		formHeadWrapper.append(labelSecondName);
-		
-		form.append(formHeadWrapper);
-		createContactsSection(form);
-		form.append(submitBtnWrapper);
-		form.append(deleteBtnWrapper);
-
-		closeModalBtn.append(closeModalBtnLineFirst);
-		closeModalBtn.append(closeModalBtnLineSecond);
-		modalWrapper.append(closeModalBtn);
-
-		modalWrapper.append(modalTitle);
-		modalWrapper.append(form);
-		modalFullSize.append(modalWrapper);
-
-		return {
-			modalFullSize,
-			labels: {
-				titles: [titleSurname, titleName, titleSecondName],
-				inputs: [inputSurname, inputName, inputSecondName],
-			},
-		}
-	} */
-
-	function createModalWindow(initButton, {onSave, onClose}) {
-		const contactsArray = [];
-
-		const modalFullSize = document.createElement('div');
-		const modalWrapper = document.createElement('div');
-
-		const modalTitle = document.createElement('h2');
-		const formHeadWrapper = document.createElement('div');
-		const form = document.createElement('form');
-
-		const labelSurname = document.createElement('label');
-		const titleSurname = document.createElement('span');
-		const inputSurname = document.createElement('input');
-
-		const labelName = document.createElement('label');
-		const titleName = document.createElement('span');
-		const inputName = document.createElement('input');
-
-		const labelSecondName = document.createElement('label');
-		const titleSecondName = document.createElement('span');
-		const inputSecondName = document.createElement('input');
-
-		const submitBtnWrapper = document.createElement('div');
-		const submitBtn = document.createElement('button');
-		const deleteBtnWrapper = document.createElement('div');
-		const deleteBtn = document.createElement('button');
-
-		const closeModalBtn = document.createElement('button');
-		const closeModalBtnLineFirst = document.createElement('span');
-		const closeModalBtnLineSecond = document.createElement('span');
-	
-		modalWrapper.classList.add('modal-wrapper');
-		modalFullSize.classList.add('modal');
-		modalTitle.classList.add('title', 'clients-form__title');
-		closeModalBtn.classList.add('modal-wrapper__close', 'btn-reset');
-
-		form.classList.add('client-form');
-		formHeadWrapper.classList.add('clients-form__header');
-
-		labelSurname.classList.add('clients-form__label');
-		labelName.classList.add('clients-form__label');
-		labelSecondName.classList.add('clients-form__label');
-
-		titleSecondName.classList.add('clients-form__subtitle', 'text');
-		titleName.classList.add('clients-form__subtitle', 'clients-form__subtitle--name', 'text');
-		titleSurname.classList.add('clients-form__subtitle', 'clients-form__subtitle--surname', 'text');
-		
-		inputSurname.classList.add('clients-form__input');
-		inputName.classList.add('clients-form__input');
-		inputSecondName.classList.add('clients-form__input');
-
-		submitBtnWrapper.classList.add('clients-form__btn-wrapper', 'form-btn');
-		deleteBtnWrapper.classList.add('clients-form__btn-wrapper', 'form-btn');
-		submitBtn.classList.add('clients-form__submit', 'text', 'btn-reset');
-		deleteBtn.classList.add('clients-form__delete', 'btn-reset');
-
-		modalTitle.textContent = 'Новый клиент';
-		titleSurname.textContent = 'Фамилия';
-		titleName.textContent = 'Имя';
-		titleSecondName.textContent = 'Отчество';
-		submitBtn.textContent = 'Сохранить';
-		deleteBtn.textContent = 'Отмена';
-
-		closeModalBtn.addEventListener('click', () => {
-			//elementFadeAnimation(modalFullSize, 200, 'out', 'modal-fade-out');
 			elementFadeAnimation({
-				childNode: modalFullSize,
-				ms: 200,
+				childNode: background,
+				ms: 150,
 				fadeState: 'out',
 				fadeClass: 'modal-fade-out',
-				closeHandler: onClose,
+				//closeHandler: onClose,
 			})
-			switchButtonDisableState(initButton);
+			switchButtonDisableState().off(initButton);
 		})
 
 		window.addEventListener('click', function(event) {
-			if (event.target === modalFullSize) {
-				//elementFadeAnimation(modalFullSize, 200, 'out', 'modal-fade-out');
+			if (event.target === background && background.childElementCount === 1) {
 				elementFadeAnimation({
-					childNode: modalFullSize,
-					ms: 200,
+					childNode: background,
+					ms: 150,
 					fadeState: 'out',
 					fadeClass: 'modal-fade-out',
-					closeHandler: onClose,
+					//closeHandler: onClose,
 				})
-				switchButtonDisableState(initButton);
+				switchButtonDisableState().off(initButton);
 			}
 		})
 
@@ -622,21 +529,30 @@
 
 		closeModalBtn.append(closeModalBtnLineFirst);
 		closeModalBtn.append(closeModalBtnLineSecond);
-		modalWrapper.append(closeModalBtn);
+		modal.append(closeModalBtn);
 
-		modalWrapper.append(modalTitle);
-		modalWrapper.append(form);
-		modalFullSize.append(modalWrapper);
+		modal.append(modalTitle);
+		modal.append(form);
+		background.append(modal);
 
 		form.addEventListener('submit', e => {
+			let isValid = true;
+			document.querySelectorAll('.clients-form__input').forEach(client => {
+				if (!client.value) {
+					e.preventDefault();
+					console.log('stop');
+					isValid = !isValid;
+				}
+			})
+			if (!isValid) {
+				return;
+			}
+			
 			const contactList = document.querySelectorAll('.contact-form__field');
 			let contactsArray;
-			e.preventDefault();
-
 			if (contactList) {
 				contactsArray = extractContactsInfo(contactList);
 			}
-
 			onSave({
 				name: inputName.value,
 				surname: inputSurname.value,
@@ -644,25 +560,103 @@
 				contacts: contactsArray,
 			})
 
-			//elementFadeAnimation(modalFullSize, 200, 'out', 'modal-fade-out');
 			elementFadeAnimation({
-				childNode: modalFullSize,
+				childNode: background,
 				ms: 200,
 				fadeState: 'out',
 				fadeClass: 'modal-fade-out',
 			});
 
-			switchButtonDisableState(submitBtn);
-			switchButtonDisableState(initButton);
+			switchButtonDisableState().off(initButton);
+		})
+
+		deleteBtn.addEventListener('click', () => {
+			//обернуть в функцию onClose (посмотреть декораторы)
+			if (!document.querySelector('.contact-confirm')) {
+				const confirmationWindow = createConfirmationWindow(background, initButton);
+				if (modal) {
+					modal.setAttribute('style', 'display: none');
+					background.append(confirmationWindow);
+					return;
+				}
+				background.append(confirmationWindow);
+			}
 		})
 
 		return {
-			modalFullSize,
-			labels: {
-				titles: [titleSurname, titleName, titleSecondName],
-				inputs: [inputSurname, inputName, inputSecondName],
-			},
+			background,
+			inputs: [inputSurname, inputName, inputSecondName],
 		}
+	}
+
+	function createConfirmationWindow(modalBg, initButton) {
+		const modal = document.createElement('div');
+		const title = document.createElement('h2');
+		const descr = document.createElement('p');
+		const btnWrapper = document.createElement('div');
+		const confirmBtn = document.createElement('button');
+		const cancelBtn = document.createElement('button');
+		const closeBtn = document.createElement('button');
+		const closeBtnLineFirst = document.createElement('span');
+		const closeBtnLineSecond = document.createElement('span');
+
+		modal.classList.add('modal-wrapper', 'contact-confirm');
+		title.classList.add('contact-confirm__title', 'title');
+		descr.classList.add('contact-confirm__descr', 'text');
+		closeBtn.classList.add('modal-wrapper__close', 'btn-reset', 'contact-confirm__close');
+		btnWrapper.classList.add('contact-confirm__buttons');
+		confirmBtn.classList.add('contact-confirm__submit', 'clients-submit-btn', 'btn-reset');
+		cancelBtn.classList.add('clients-delete-btn', 'btn-reset');
+
+		title.textContent = 'Удалить контент';
+		descr.textContent = 'Вы действительно хотите удалить данного клиента?';
+		confirmBtn.textContent = 'Удалить';
+		cancelBtn.textContent = 'Отмена';
+
+		confirmBtn.addEventListener('click', () => {
+			modalBg.remove();
+			switchButtonDisableState().off(initButton);
+		})
+		closeBtn.addEventListener('click', () => {
+			if (document.querySelector('.modal-wrapper')) {
+				document.querySelector('.modal-wrapper').setAttribute('style', 'display: block');
+				modal.remove();
+				return;
+			}
+			switchButtonDisableState().off(initButton);
+			modalBg.remove();
+		});
+		cancelBtn.addEventListener('click', () => {
+			if (document.querySelector('.modal-wrapper')) {
+				modal.remove();
+				document.querySelector('.modal-wrapper').setAttribute('style', 'display: block');
+				return;
+			}
+			switchButtonDisableState().off(initButton);
+			modalBg.remove();
+		})
+		window.addEventListener('click', function(event) {
+			if (event.target === modalBg && document.querySelector('.contact-confirm')) {
+				if (document.querySelector('.modal-wrapper')) {
+					modal.remove();
+					document.querySelector('.modal-wrapper').setAttribute('style', 'display: block');
+					return;
+				}
+				switchButtonDisableState().off(initButton);
+				modalBg.remove();
+			}
+		})
+
+		closeBtn.append(closeBtnLineFirst);
+		closeBtn.append(closeBtnLineSecond);
+		btnWrapper.append(confirmBtn);
+		btnWrapper.append(cancelBtn);
+		modal.append(closeBtn);
+		modal.append(title);
+		modal.append(descr);
+		modal.append(btnWrapper);
+
+		return modal;
 	}
 
 	function createContactsSection() {
@@ -963,7 +957,7 @@
 		return wrapper;
 	}
 
-	function createAddButton() {
+	function createClientAddButton() {
 		function renderClientAddButtonIcon(node) {
 			const iconSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
 			const pathSvg = document.createElementNS('http://www.w3.org/2000/svg', 'path');
@@ -982,23 +976,23 @@
 			return node.appendChild(iconSvg);
 		}
 		
-		const addBtnWrapper = document.createElement('div');
-		const addClientBtn = document.createElement('button');
+		const wrapper = document.createElement('div');
+		const btn = document.createElement('button');
 		const btnText = document.createElement('span');
 
-		addClientBtn.classList.add('btn-add', 'btn-reset');
-		addBtnWrapper.classList.add('btn-wrapper');
+		btn.classList.add('btn-add', 'btn-reset');
+		wrapper.classList.add('btn-wrapper');
 		btnText.classList.add('btn-add__text', 'text');
 
 		btnText.textContent = 'Добавить Клиента';
 		
-		renderClientAddButtonIcon(addClientBtn);
-		addClientBtn.append(btnText);
-		addBtnWrapper.append(addClientBtn);
+		renderClientAddButtonIcon(btn);
+		btn.append(btnText);
+		wrapper.append(btn);
 
 		return {
-			addBtnWrapper,
-			addClientBtn,
+			wrapper,
+			btn,
 		}
 	}
 
@@ -1015,7 +1009,15 @@
 	}
 
 	function switchButtonDisableState(btn) {
-		btn.hasAttribute('disabled') ? btn.removeAttribute('disabled', 'disabled') : btn.setAttribute('disabled', 'disabled');
+		const stateMethods = {
+			on(btn) {
+				btn.setAttribute('disabled', 'disabled');
+			}, 
+			off(btn) {
+				btn.removeAttribute('disabled', 'disabled');
+			}
+		}
+		return stateMethods;
 	}
 
 	function extractContactsInfo(node) {
@@ -1031,15 +1033,15 @@
 	function elementFadeAnimation(params) {
 		if (params.fadeState === 'in') {
 			setTimeout(() => {
-				params.childNode.classList.add(params.fadeClass, params.additionalClass || null);
+				params.childNode.classList.add(params.fadeClass);
+				if (params.additionalClass) params.childNode.classList.add(params.additionalClass);
 			}, params.ms)
 		} else if (params.fadeState === 'out') {
-			params.childNode.classList.add(params.fadeClass, params.additionalClass || null);
-
+			params.childNode.classList.add(params.fadeClass);
+			if (params.additionalClass) params.childNode.classList.add(params.additionalClass);
 			params.closeHandler ? params.closeHandler(params.childNode) : setTimeout(() => {
 				params.childNode.remove();
 			}, params.ms)
-		
 		}
 	}
 
@@ -1052,71 +1054,99 @@
 			})
 	}
 
-	document.addEventListener('DOMContentLoaded', async () => {
 
+/* 	function foo(createClientModal) {
+		if (!document.querySelector('.contact-confirm')) {
+			const confirmationWindow = createConfirmationWindow(background, initButton);
+			if (!createClientModal) {
+				modal.setAttribute('style', 'display: none');
+				background.append(confirmationWindow);
+				return;
+			}
+			background.append(confirmationWindow);
+		}
+	} */
+	
+
+	document.addEventListener('DOMContentLoaded', async () => {
 		async function loadClients() {
 			const response = await fetch('http://localhost:3000/api/clients');
 			const data = await response.json();
 			console.log(data);
 			return data;
 		}
-		
-		await loadClients(); 
-		
-		const main = document.querySelector('.main');
 
-		const modalEventHandlers = {
-			async onSave(clientInfo) {
-				const respone = await fetch('http://localhost:3000/api/clients', {
+		const eventHandlers = {
+			onSave(clientInfo) {
+				fetch('http://localhost:3000/api/clients', {
 					method: 'POST',
 					body: JSON.stringify(clientInfo),
 				})
 			},
+			onChange() {
+				// etc
+			},
+			onDelete({clientData, clientRow}) {
+				// !модальный фон нужно вынести в отдельную функцию а потом собирать модальный вариант в зависимости от места вызова модального окна
+				clientRow.remove();
+				fetch(`http://localhost:3000/api/clients/${clientData.id}`, {
+					method: 'DELETE',
+				})
+			},
 			onClose(element) {
-				console.log('доп параметры');
 				element.remove();
 			},
 		}
 
-		const container = createContainer();
+		function renderClients(clientsData) {
+			tableBody.loadingRow.remove();
+      clientsData.forEach((client) => {
+				tableBody.body.append(createClientRow(client, eventHandlers));
+      });
+    }
 
+		function clearClients(nodeList) {
+			nodeList.forEach(node => {
+				node.remove();
+			})
+		}
+
+		function renderClientsTable() {
+			table.append(tableHead);
+			table.append(tableBody.body);
+			container.append(table);
+			container.append(addClient.wrapper);
+			main.append(container);
+		}
+
+		const main = document.querySelector('.main');
+		const container = createContainer();
 		const table = createTable();
 		const tableHead = createTableHead();
 		const tableBody = createTableBody();
-		const clientRow = createClientRow();
+		const addClient = createClientAddButton();
 
-		const addBtn = createAddButton();
+		renderClientsTable();
 
-		table.append(tableHead);
-		tableBody.tableBody.append(clientRow);
-		table.append(tableBody.tableBody);
-		container.append(table);
-		container.append(addBtn.addBtnWrapper);
-		main.append(container);
-
-		//temp
-		setTimeout(() => {
-			tableBody.loadingRow.remove();
-		}, 1500)
-		//
+		let clientsData = await loadClients(); 
+		renderClients(clientsData);
 		
-		addBtn.addClientBtn.addEventListener('click', () => {
-			const modalWindow = createModalWindow(addBtn.addClientBtn, modalEventHandlers);
-
-			document.body.append(modalWindow.modalFullSize);
+		addClient.btn.addEventListener('click', () => {
+			const modal = createModalWindow({background: createModalWrapper(), initButton: addClient.btn}, eventHandlers);
+			document.body.append(modal.background);
 			elementFadeAnimation({
-				childNode: modalWindow.modalFullSize,
+				childNode: modal.background,
 				ms: 1,
 				fadeState: 'in',
 				fadeClass: 'modal-fade-in',
 			});
 
-			if (document.body.contains(modalWindow.modalFullSize)) {
-				switchButtonDisableState(addBtn.addClientBtn);
+			if (document.body.contains(modal.background)) {
+				switchButtonDisableState().on(addClient.btn);
 			}
 
 			// modal input animations 
-			modalWindow.labels.inputs.forEach(input => {
+			modal.inputs.forEach(input => {
 				input.addEventListener('focus', () => {
 					if (!input.value) {
 						animateElement([
@@ -1138,7 +1168,6 @@
 					}
 				})
 			})
-
 		})
 	})
 })()
