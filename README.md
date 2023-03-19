@@ -8,4 +8,5 @@ Before getting started you need to run local server, here's following steps:
 If all have been done correctly, the server will log out:
 "Сервер CRM запущен. Вы можете использовать его по адресу http://localhost:3000"
 
-You ready to go.
+
+You ready to go. Now you can open project with index.html
