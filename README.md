@@ -9,4 +9,4 @@ If all have been done correctly, the server will log out:
 "Сервер CRM запущен. Вы можете использовать его по адресу http://localhost:3000"
 
 
-You ready to go. Now you can open project with index.html
+You ready to go. Now you can open the project with index.html
