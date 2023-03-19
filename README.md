@@ -1,11 +1,11 @@
 # How does my "CRM pet-project" works
 
-Before using this crm you have to start local server, here's following steps:
-1) Intall NodeJS (https://nodejs.org/en/download);
-2) Via NodeJS cmd go to /crm-backend directory;
+Before using getting started you need to run local server, here's following steps:
+1) Intall Node JS (https://nodejs.org/en/download);
+2) Via Node JS cmd switch to /crm-backend directory;
 2) Type the following line: "node index.js" (no inverted commas).
 
-If all've been done correctly, the server will log this:
+If all have been done correctly, the server will log out:
 "Сервер CRM запущен. Вы можете использовать его по адресу http://localhost:3000"
 
 You ready to go.
