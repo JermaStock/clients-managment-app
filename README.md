@@ -1,6 +1,6 @@
 # How does my "CRM pet-project" works
 
-Before using getting started you need to run local server, here's following steps:
+Before getting started you need to run local server, here's following steps:
 1) Intall Node JS (https://nodejs.org/en/download);
 2) Via Node JS cmd switch to /crm-backend directory;
 2) Type the following line: "node index.js" (no inverted commas).
