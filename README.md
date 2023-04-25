@@ -1,4 +1,4 @@
-# How does my "CRM pet-project" works
+# How does my "CRM pet-project" work.
 
 Before getting started you need to run local server, here's following steps:
 1) Install Node JS (https://nodejs.org/en/download);
