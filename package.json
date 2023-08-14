@@ -1,0 +1,32 @@
+{
+  "name": "crm",
+  "version": "1.0.0",
+  "description": "crm pet project",
+  "main": "index.js",
+  "scripts": {
+		"backend": "node ./src/server",
+		"client": "http-server -o",
+    "start": "concurrently \"npm run backend\" \"npm run client\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JermaStock/crm-pet-project.git"
+  },
+  "keywords": [
+    "crm",
+    "pet",
+    "project",
+    "pet-project",
+    "crm-pet-project"
+  ],
+  "author": "Alexaner Tyumentsev",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JermaStock/crm-pet-project/issues"
+  },
+  "homepage": "https://github.com/JermaStock/crm-pet-project#readme",
+  "devDependencies": {
+    "concurrently": "^8.2.0",
+    "http-server": "^14.1.1"
+  }
+}
