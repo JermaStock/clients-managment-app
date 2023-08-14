@@ -1506,7 +1506,7 @@
 						}
 					})
 				} else {
-					await fetch('${URL_PATH}', {
+					await fetch(URL_PATH, {
 						method: 'POST',
 						body: JSON.stringify(clientInfo),
 						headers: {
