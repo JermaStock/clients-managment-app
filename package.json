@@ -4,22 +4,15 @@
   "description": "crm pet project",
   "main": "index.js",
   "scripts": {
-		"backend": "node ./src/server",
-		"client": "http-server -o",
+    "backend": "node ./src/server",
+    "client": "http-server -o",
     "start": "concurrently \"npm run backend\" \"npm run client\""
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/JermaStock/crm-pet-project.git"
   },
-  "keywords": [
-    "crm",
-    "pet",
-    "project",
-    "pet-project",
-    "crm-pet-project"
-  ],
-  "author": "Alexaner Tyumentsev",
+  "author": "Alexander Tyumentsev",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/JermaStock/crm-pet-project/issues"
